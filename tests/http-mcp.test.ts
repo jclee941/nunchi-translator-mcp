@@ -33,6 +33,19 @@ const nunchiDecodeResponseSchema = z.object({
   }),
 })
 
+const toneRewriteResponseSchema = z.object({
+  result: z.object({
+    structuredContent: z.object({
+      guardrails: z.array(z.string()),
+      rewrites: z.array(
+        z.object({
+          text: z.string(),
+        }),
+      ),
+    }),
+  }),
+})
+
 describe("HTTP MCP transport", () => {
   test("lists nunchi tools through Streamable HTTP", async () => {
     const server = createHttpApp(loadConfig({ PORT: "3111" }))
@@ -48,7 +61,15 @@ describe("HTTP MCP transport", () => {
 
       expect(findTool(parsed.result.tools, "nunchi_message_decode")?.outputSchema).toBeDefined()
       expect(findTool(parsed.result.tools, "nunchi_reply_draft")?.outputSchema).toBeDefined()
-      expect(parsed.result.tools).toHaveLength(2)
+      expect(findTool(parsed.result.tools, "nunchi_tone_rewrite")?.outputSchema).toBeDefined()
+      expect(findTool(parsed.result.tools, "nunchi_boundary_line")?.outputSchema).toBeDefined()
+      expect(findTool(parsed.result.tools, "nunchi_next_step")?.outputSchema).toBeDefined()
+      expect(findTool(parsed.result.tools, "nunchi_repair_apology")?.outputSchema).toBeDefined()
+      expect(
+        findTool(parsed.result.tools, "nunchi_invitation_pressure")?.outputSchema,
+      ).toBeDefined()
+      expect(findTool(parsed.result.tools, "nunchi_group_chat_summary")?.outputSchema).toBeDefined()
+      expect(parsed.result.tools).toHaveLength(8)
     } finally {
       server.stop(true)
     }
@@ -75,6 +96,31 @@ describe("HTTP MCP transport", () => {
 
       expect(parsed.result.structuredContent.likelyIntent).toContain("거절")
       expect(parsed.result.structuredContent.replyOptions[0]?.style).toBe("soft_check")
+    } finally {
+      server.stop(true)
+    }
+  })
+
+  test("calls nunchi tone rewrite through Streamable HTTP", async () => {
+    const server = createHttpApp(loadConfig({ PORT: "3111" }))
+
+    try {
+      await initializeMcpSession()
+      const result = await postMcpRequest({
+        id: 4,
+        method: "tools/call",
+        params: {
+          name: "nunchi_tone_rewrite",
+          arguments: {
+            relationship: "coworker",
+            targetTone: "more_polite",
+            text: "그건 오늘 못 해요",
+          },
+        },
+      })
+      const parsed = toneRewriteResponseSchema.parse(result)
+
+      expect(parsed.result.structuredContent.rewrites[0]?.text).toContain("오늘은 어렵습니다")
     } finally {
       server.stop(true)
     }
