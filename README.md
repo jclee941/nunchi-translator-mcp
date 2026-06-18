@@ -32,6 +32,14 @@ curl -i http://localhost:3000/mcp
 - Health check path: `/health`
 - PlayMCP endpoint: `https://<Kakao-Cloud-domain>/mcp`
 
+## PlayMCP Registration Flow
+
+1. PlayMCP in KC에서 배포가 Active가 되면 발급된 Endpoint URL을 복사합니다.
+2. PlayMCP 개발자 콘솔에서 새 MCP 서버로 등록합니다.
+3. 먼저 임시 등록하고, 상세 미리보기에서 도구함에 추가한 뒤 PlayMCP AI 채팅으로 테스트합니다.
+4. 테스트가 끝난 뒤 심사 요청합니다.
+5. 승인 후 공개 상태를 전체 공개로 전환하고, 공개 MCP 상세 URL을 공모전 접수 양식에 제출합니다.
+
 ## Safety
 
 - 상대의 속마음을 확정하지 않습니다.
