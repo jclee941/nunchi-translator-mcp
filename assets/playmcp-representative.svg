@@ -1,0 +1,91 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16201F"/>
+      <stop offset="0.55" stop-color="#243B37"/>
+      <stop offset="1" stop-color="#18181B"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="152" y1="150" x2="872" y2="846" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8F1E7"/>
+      <stop offset="1" stop-color="#DCEDE8"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#39B9A6"/>
+      <stop offset="1" stop-color="#1D766F"/>
+    </linearGradient>
+    <linearGradient id="coral" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F48A73"/>
+      <stop offset="1" stop-color="#D85545"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="30" stdDeviation="32" flood-color="#07110F" flood-opacity="0.35"/>
+    </filter>
+    <filter id="cardShadow" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#07110F" flood-opacity="0.18"/>
+    </filter>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(640 410) rotate(90) scale(230)">
+      <stop stop-color="#F7B456" stop-opacity="0.48"/>
+      <stop offset="1" stop-color="#F7B456" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="760" cy="214" r="250" fill="#23514B" opacity="0.22"/>
+  <circle cx="184" cy="850" r="276" fill="#C86855" opacity="0.12"/>
+  <path d="M0 778C128 705 260 702 410 758C565 817 710 834 1024 735V1024H0V778Z" fill="#314844" opacity="0.46"/>
+
+  <g filter="url(#shadow)">
+    <rect x="116" y="126" width="792" height="772" rx="52" fill="url(#panel)"/>
+  </g>
+  <rect x="148" y="158" width="728" height="708" rx="38" stroke="#12332F" stroke-opacity="0.12" stroke-width="3"/>
+
+  <text x="206" y="280" fill="#142220" font-family="Inter, Arial, sans-serif" font-size="80" font-weight="850" letter-spacing="0">Nunchi</text>
+  <text x="206" y="356" fill="#142220" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="800" letter-spacing="0">Translator MCP</text>
+  <text x="210" y="412" fill="#49615D" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="520" letter-spacing="0">Nuance-aware reply tools</text>
+
+  <circle cx="650" cy="438" r="230" fill="url(#glow)"/>
+  <g opacity="0.38">
+    <path d="M596 410L682 500L777 460L825 574L730 670L620 632L552 724" stroke="#1D766F" stroke-width="6" stroke-linecap="round"/>
+    <path d="M682 500L620 632M777 460L730 670M825 574L620 632" stroke="#1D766F" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="596" cy="410" r="18" fill="#39B9A6"/>
+    <circle cx="682" cy="500" r="24" fill="#F7B456"/>
+    <circle cx="777" cy="460" r="18" fill="#39B9A6"/>
+    <circle cx="825" cy="574" r="22" fill="#F48A73"/>
+    <circle cx="730" cy="670" r="24" fill="#39B9A6"/>
+    <circle cx="620" cy="632" r="18" fill="#F7B456"/>
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <path d="M206 482C206 454.386 228.386 432 256 432H566C593.614 432 616 454.386 616 482V558C616 585.614 593.614 608 566 608H322L258 660V608H256C228.386 608 206 585.614 206 558V482Z" fill="#FFFFFF"/>
+    <rect x="266" y="486" width="278" height="17" rx="8.5" fill="#506B66" opacity="0.22"/>
+    <rect x="266" y="526" width="218" height="17" rx="8.5" fill="#506B66" opacity="0.18"/>
+    <rect x="266" y="566" width="248" height="17" rx="8.5" fill="#506B66" opacity="0.13"/>
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <path d="M294 704C294 677.49 315.49 656 342 656H646C672.51 656 694 677.49 694 704V764C694 790.51 672.51 812 646 812H416L354 858V812H342C315.49 812 294 790.51 294 764V704Z" fill="#ECFFFA"/>
+    <rect x="358" y="708" width="256" height="16" rx="8" fill="#1D766F" opacity="0.24"/>
+    <rect x="358" y="748" width="196" height="16" rx="8" fill="#1D766F" opacity="0.18"/>
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <rect x="598" y="548" width="238" height="78" rx="18" fill="#FFFFFF" fill-opacity="0.97"/>
+    <circle cx="638" cy="587" r="21" fill="url(#teal)"/>
+    <path d="M628 587L636 595L650 579" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="674" y="581" fill="#172623" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="760" letter-spacing="0">Tone</text>
+    <rect x="674" y="598" width="106" height="9" rx="4.5" fill="#506B66" opacity="0.18"/>
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <rect x="530" y="642" width="252" height="78" rx="18" fill="#FFFFFF" fill-opacity="0.97"/>
+    <circle cx="570" cy="681" r="21" fill="url(#coral)"/>
+    <path d="M560 681H580M570 671V691" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <text x="606" y="675" fill="#172623" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="760" letter-spacing="0">Reply</text>
+    <rect x="606" y="692" width="120" height="9" rx="4.5" fill="#506B66" opacity="0.18"/>
+  </g>
+
+  <g opacity="0.18">
+    <path d="M792 214H840M816 190V238" stroke="#12332F" stroke-width="8" stroke-linecap="round"/>
+    <path d="M190 706H230M210 686V726" stroke="#12332F" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>

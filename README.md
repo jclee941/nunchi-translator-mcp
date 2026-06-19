@@ -46,6 +46,18 @@ curl -i http://localhost:3000/mcp
 4. 테스트가 끝난 뒤 심사 요청합니다.
 5. 승인 후 공개 상태를 전체 공개로 전환하고, 공개 MCP 상세 URL을 공모전 접수 양식에 제출합니다.
 
+## PlayMCP Submission Fields
+
+- 대표 이미지: `assets/playmcp-representative.png`
+- MCP 이름: `nunchi-translator-mcp`
+- MCP 식별자: `nunchiTranslator`
+- MCP 설명: 애매한 카톡 문장의 눈치 단서와 감정 온도를 분석하고, 관계를 해치지 않는 답장 초안·톤 조정·거절/사과/확인 문장을 제안하는 MCP입니다. 상대의 속마음을 단정하지 않고 확인 질문과 선택권을 우선합니다.
+- 대화 예시 1: 애매한 카톡 답장 도와줘
+- 대화 예시 2: 거절 문장 부드럽게 바꿔줘
+- 대화 예시 3: 단체방 합의 내용 정리해줘
+- 인증 방식: 인증 사용하지 않음
+- MCP Endpoint: `https://<Kakao-Cloud-domain>/mcp`
+
 ## Safety
 
 - 상대의 속마음을 확정하지 않습니다.
