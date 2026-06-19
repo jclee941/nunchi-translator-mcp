@@ -26,7 +26,10 @@ bun run start
 
 ```bash
 curl -i http://localhost:3000/health
-curl -i http://localhost:3000/mcp
+curl -i http://localhost:3000/mcp \
+  -H 'Accept: application/json, text/event-stream' \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"local-smoke","version":"0.1.0"}}}'
 ```
 
 ## Kakao Cloud Git Source Build
@@ -52,15 +55,42 @@ curl -i http://localhost:3000/mcp
 - MCP 이름: `nunchi-translator-mcp`
 - MCP 식별자: `nunchiTranslator`
 - MCP 설명: 애매한 카톡 문장의 눈치 단서와 감정 온도를 분석하고, 관계를 해치지 않는 답장 초안·톤 조정·거절/사과/확인 문장을 제안하는 MCP입니다. 상대의 속마음을 단정하지 않고 확인 질문과 선택권을 우선합니다.
-- 대화 예시 1: 애매한 카톡 답장 도와줘
-- 대화 예시 2: 거절 문장 부드럽게 바꿔줘
-- 대화 예시 3: 단체방 합의 내용 정리해줘
+- 대화 예시 1: 친구가 "오늘 좀 피곤하긴 한데 네가 원하면 갈게"라고 했어. 약속을 미루고 싶은 건지, 그냥 배려하는 건지 눈치 단서와 안전한 답장 후보를 알려줘.
+- 대화 예시 2: "그건 네가 알아서 해"라고 보내려다가 너무 차갑게 들릴까 봐 걱정돼. 친구에게 덜 날카롭고 따뜻하게 보이도록 바꿔줘.
+- 대화 예시 3: 단체방에서 "금요일 어때?", "강남이면 좋아", "나는 7시 가능"이라고 나왔어. 저녁 약속 기준으로 합의된 내용과 다음에 물어볼 질문을 정리해줘.
 - 인증 방식: 인증 사용하지 않음
 - 톡방 접근 가능 여부: 직접 접근 불가. 사용자가 직접 입력한 문장 또는 메시지 배열만 분석합니다.
 - MCP Endpoint: `https://nunchi-translator.playmcp-endpoint.kakaocloud.io/mcp`
 - 전송 방식: Streamable HTTP, Remote MCP, stateless 요청 처리
 - 지원 MCP 버전: `2025-03-26`, `2025-06-18`, `2025-11-25` (`@modelcontextprotocol/sdk` 1.29.0)
 - Tool 메타데이터: 모든 Tool에 `name`, `description`, `inputSchema`, `annotations` 포함
+
+## PlayMCP Chat Smoke Prompts
+
+PlayMCP AI 채팅에서 Tool call 카운트가 올라가는지 확인할 때는 아래처럼 도구 사용을 명시합니다.
+
+```text
+nunchi_message_decode 도구를 사용해서 이 카톡을 분석해줘.
+message: 오늘 좀 피곤하긴 한데 네가 원하면 갈게
+relationship: friend
+context: 약속 시간을 정하는 중
+```
+
+```text
+nunchi_tone_rewrite 도구를 사용해서 이 문장을 친구에게 보내도 덜 차갑게 바꿔줘.
+text: 그건 네가 알아서 해
+relationship: friend
+targetTone: warmer
+```
+
+```text
+nunchi_group_chat_summary 도구를 사용해서 단체방 합의와 다음 질문을 정리해줘.
+topic: 저녁 약속
+messages:
+- 금요일 어때?
+- 강남이면 좋아
+- 나는 7시 가능
+```
 
 ## Safety
 
