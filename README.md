@@ -36,7 +36,7 @@ curl -i http://localhost:3000/mcp
 - Dockerfile path: `Dockerfile`
 - Container port: `3000`
 - Health check path: `/health`
-- PlayMCP endpoint: `https://<Kakao-Cloud-domain>/mcp`
+- PlayMCP endpoint: `https://nunchi-translator.playmcp-endpoint.kakaocloud.io/mcp`
 
 ## PlayMCP Registration Flow
 
@@ -57,7 +57,7 @@ curl -i http://localhost:3000/mcp
 - 대화 예시 3: 단체방 합의 내용 정리해줘
 - 인증 방식: 인증 사용하지 않음
 - 톡방 접근 가능 여부: 직접 접근 불가. 사용자가 직접 입력한 문장 또는 메시지 배열만 분석합니다.
-- MCP Endpoint: `https://<Kakao-Cloud-domain>/mcp`
+- MCP Endpoint: `https://nunchi-translator.playmcp-endpoint.kakaocloud.io/mcp`
 - 전송 방식: Streamable HTTP, Remote MCP, stateless 요청 처리
 - 지원 MCP 버전: `2025-03-26`, `2025-06-18`, `2025-11-25` (`@modelcontextprotocol/sdk` 1.29.0)
 - Tool 메타데이터: 모든 Tool에 `name`, `description`, `inputSchema`, `annotations` 포함

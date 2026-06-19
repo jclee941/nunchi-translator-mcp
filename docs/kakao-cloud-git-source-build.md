@@ -20,18 +20,18 @@ MCP 서버 이름과 설명은 PlayMCP in KC 관리 화면용입니다. 이후 P
 | `PORT` | `3000` |
 | `MCP_SERVER_NAME` | `nunchi-translator-mcp` |
 | `MCP_SERVER_VERSION` | `0.1.0` |
-| `PUBLIC_BASE_URL` | `https://<Kakao-Cloud-domain>` |
+| `PUBLIC_BASE_URL` | `https://nunchi-translator.playmcp-endpoint.kakaocloud.io` |
 
 배포 후 확인:
 
 ```bash
-curl -i https://<Kakao-Cloud-domain>/health
+curl -i https://nunchi-translator.playmcp-endpoint.kakaocloud.io/health
 ```
 
 PlayMCP 개발자 콘솔에 등록할 endpoint:
 
 ```text
-https://<Kakao-Cloud-domain>/mcp
+https://nunchi-translator.playmcp-endpoint.kakaocloud.io/mcp
 ```
 
 ## PlayMCP 공모전 등록 순서
