@@ -7,6 +7,14 @@ import { createHttpApp } from "../src/http-server.js"
 
 const toolSchema = z
   .object({
+    annotations: z.object({
+      destructiveHint: z.boolean(),
+      idempotentHint: z.boolean(),
+      openWorldHint: z.boolean(),
+      readOnlyHint: z.boolean(),
+      title: z.string(),
+    }),
+    description: z.string(),
     inputSchema: z.object({}).passthrough(),
     name: z.string(),
     outputSchema: z.object({}).passthrough().optional(),
@@ -69,6 +77,15 @@ describe("HTTP MCP transport", () => {
         findTool(parsed.result.tools, "nunchi_invitation_pressure")?.outputSchema,
       ).toBeDefined()
       expect(findTool(parsed.result.tools, "nunchi_group_chat_summary")?.outputSchema).toBeDefined()
+      for (const tool of parsed.result.tools) {
+        expect(tool.description).toContain("Nunchi Translator MCP(눈치 번역기 MCP)")
+        expect(tool.annotations).toMatchObject({
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+          readOnlyHint: true,
+        })
+      }
       expect(parsed.result.tools).toHaveLength(8)
     } finally {
       server.stop(true)

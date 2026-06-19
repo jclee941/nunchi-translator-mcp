@@ -26,6 +26,11 @@ import {
   summarizeGroupChat,
   writeRepairApology,
 } from "./nunchi-social-tools.js"
+import {
+  formatStructuredMcpText,
+  nunchiToolAnnotations,
+  nunchiToolDescription,
+} from "./tool-metadata.js"
 
 export function createNunchiMcpServer(config: AppConfig): McpServer {
   const server = new McpServer({
@@ -37,10 +42,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_message_decode",
     {
       title: "Nunchi Message Decode",
-      description:
-        "Decode ambiguous Korean chat messages into non-definitive intent clues and safe reply options.",
+      description: nunchiToolDescription(
+        "decodes ambiguous Korean chat messages into non-definitive intent clues and safe reply options.",
+      ),
       inputSchema: nunchiDecodeInputSchema,
       outputSchema: nunchiDecodeOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Message Decode"),
     },
     ({ context, message, relationship }) => {
       const result =
@@ -64,10 +71,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_reply_draft",
     {
       title: "Nunchi Reply Draft",
-      description:
-        "Draft a KakaoTalk-ready Korean reply that keeps humor, boundaries, and confirmation balanced.",
+      description: nunchiToolDescription(
+        "drafts a Korean chat reply that keeps humor, boundaries, and confirmation balanced.",
+      ),
       inputSchema: nunchiReplyDraftInputSchema,
       outputSchema: nunchiReplyDraftOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Reply Draft"),
     },
     ({ goal, relationship, situation, tone }) => {
       const draft = draftNunchiReply({ goal, relationship, situation, tone })
@@ -88,10 +97,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_tone_rewrite",
     {
       title: "Nunchi Tone Rewrite",
-      description:
-        "Rewrite a blunt Korean chat message into safer relationship-aware tone options.",
+      description: nunchiToolDescription(
+        "rewrites a blunt Korean chat message into safer relationship-aware tone options.",
+      ),
       inputSchema: nunchiToneRewriteInputSchema,
       outputSchema: nunchiToneRewriteOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Tone Rewrite"),
     },
     ({ relationship, targetTone, text }) => {
       const result = rewriteNunchiTone({ relationship, targetTone, text })
@@ -112,9 +123,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_boundary_line",
     {
       title: "Nunchi Boundary Line",
-      description: "Draft a clear but low-conflict Korean boundary message for KakaoTalk.",
+      description: nunchiToolDescription(
+        "drafts a clear but low-conflict Korean boundary message.",
+      ),
       inputSchema: nunchiBoundaryLineInputSchema,
       outputSchema: nunchiBoundaryLineOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Boundary Line"),
     },
     ({ boundaryType, firmness, relationship, situation }) => {
       const result = draftBoundaryLine({ boundaryType, firmness, relationship, situation })
@@ -135,10 +149,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_next_step",
     {
       title: "Nunchi Next Step",
-      description:
-        "Recommend the next safe reply and action steps for an ambiguous KakaoTalk thread.",
+      description: nunchiToolDescription(
+        "recommends the next safe reply and action steps for an ambiguous Korean chat thread.",
+      ),
       inputSchema: nunchiNextStepInputSchema,
       outputSchema: nunchiNextStepOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Next Step"),
     },
     ({ desiredOutcome, message, relationship }) => {
       const result = planNextNunchiStep({ desiredOutcome, message, relationship })
@@ -159,10 +175,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_repair_apology",
     {
       title: "Nunchi Repair Apology",
-      description:
-        "Repair an awkward Korean chat message with a short apology and safer next line.",
+      description: nunchiToolDescription(
+        "repairs an awkward Korean chat message with a short apology and safer next line.",
+      ),
       inputSchema: nunchiRepairApologyInputSchema,
       outputSchema: nunchiRepairApologyOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Repair Apology"),
     },
     ({ awkwardMessage, relationship, repairGoal }) => {
       const result = writeRepairApology({ awkwardMessage, relationship, repairGoal })
@@ -183,9 +201,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_invitation_pressure",
     {
       title: "Nunchi Invitation Pressure",
-      description: "Check whether an invitation sounds pressuring and rewrite it with an easy out.",
+      description: nunchiToolDescription(
+        "checks whether an invitation sounds pressuring and rewrites it with an easy out.",
+      ),
       inputSchema: nunchiInvitationPressureInputSchema,
       outputSchema: nunchiInvitationPressureOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Invitation Pressure"),
     },
     ({ invitation, relationship }) => {
       const result = checkInvitationPressure({ invitation, relationship })
@@ -206,9 +227,12 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
     "nunchi_group_chat_summary",
     {
       title: "Nunchi Group Chat Summary",
-      description: "Summarize group chat consensus and produce the next clean ask.",
+      description: nunchiToolDescription(
+        "summarizes Korean group chat consensus and produces the next clean ask.",
+      ),
       inputSchema: nunchiGroupChatSummaryInputSchema,
       outputSchema: nunchiGroupChatSummaryOutputSchema,
+      annotations: nunchiToolAnnotations("Nunchi Group Chat Summary"),
     },
     ({ messages, topic }) => {
       const result = summarizeGroupChat({ messages, topic })
@@ -226,8 +250,4 @@ export function createNunchiMcpServer(config: AppConfig): McpServer {
   )
 
   return server
-}
-
-function formatStructuredMcpText(title: string, value: unknown): string {
-  return `${title}\n\n${JSON.stringify(value, null, 2)}`
 }
