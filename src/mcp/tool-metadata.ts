@@ -1,6 +1,7 @@
 import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js"
 
-const serviceName = "Nunchi Translator MCP(눈치 번역기 MCP)"
+const serviceName = "nunchi-translator-mcp"
+const serviceDisplayName = "Nunchi Translator MCP(눈치 번역기 MCP)"
 
 export const safeTextToolAnnotations = {
   title: "Nunchi Translator MCP Tool",
@@ -18,7 +19,7 @@ export function nunchiToolAnnotations(title: string): ToolAnnotations {
 }
 
 export function nunchiToolDescription(action: string): string {
-  return `${serviceName} ${action}`
+  return `${serviceName} (${serviceDisplayName}) ${action}`
 }
 
 export function formatStructuredMcpText(title: string, value: unknown): string {

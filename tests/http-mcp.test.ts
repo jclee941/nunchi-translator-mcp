@@ -5,21 +5,19 @@ import { z } from "zod"
 import { loadConfig } from "../src/config.js"
 import { createHttpApp } from "../src/http-server.js"
 
-const toolSchema = z
-  .object({
-    annotations: z.object({
-      destructiveHint: z.boolean(),
-      idempotentHint: z.boolean(),
-      openWorldHint: z.boolean(),
-      readOnlyHint: z.boolean(),
-      title: z.string(),
-    }),
-    description: z.string(),
-    inputSchema: z.object({}).passthrough(),
-    name: z.string(),
-    outputSchema: z.object({}).passthrough().optional(),
-  })
-  .passthrough()
+const toolSchema = z.looseObject({
+  annotations: z.object({
+    destructiveHint: z.boolean(),
+    idempotentHint: z.boolean(),
+    openWorldHint: z.boolean(),
+    readOnlyHint: z.boolean(),
+    title: z.string(),
+  }),
+  description: z.string(),
+  inputSchema: z.looseObject({}),
+  name: z.string(),
+  outputSchema: z.looseObject({}).optional(),
+})
 
 const toolsListResponseSchema = z.object({
   result: z.object({
@@ -78,6 +76,7 @@ describe("HTTP MCP transport", () => {
       ).toBeDefined()
       expect(findTool(parsed.result.tools, "nunchi_group_chat_summary")?.outputSchema).toBeDefined()
       for (const tool of parsed.result.tools) {
+        expect(tool.description).toContain("nunchi-translator-mcp")
         expect(tool.description).toContain("Nunchi Translator MCP(눈치 번역기 MCP)")
         expect(tool.annotations).toMatchObject({
           destructiveHint: false,
