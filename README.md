@@ -1,217 +1,231 @@
-# 눈치 번역기 MCP (Nunchi Translator MCP)
+# nunchi-translator-mcp
 
-[![Runtime: Bun 1.3.10](https://img.shields.io/badge/runtime-Bun%201.3.10-orange)](https://bun.sh)
-[![MCP SDK: 1.29.0](https://img.shields.io/badge/MCP%20SDK-1.29.0-6f42c1)](https://modelcontextprotocol.io)
-[![Schema: Zod 4.4.3](https://img.shields.io/badge/schema-Zod%204.4.3-3068c6)](https://zod.dev)
-[![Container: Bun Alpine](https://img.shields.io/badge/container-Bun%20Alpine-0db7ed)](./Dockerfile)
+![Bun](https://img.shields.io/badge/Bun-1.3.10-f9f1e1?logo=bun&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?logo=typescript&logoColor=white)
+![MCP SDK](https://img.shields.io/badge/MCP--SDK-1.29.0-5b21b6)
+![License](https://img.shields.io/badge/license-Private_0.1.0-94a3b8)
+![Status](https://img.shields.io/badge/status-experimental-orange)
 
-한국어 사회적·문화적 맥락(눈치)을 LLM 에이전트가 더 자연스럽게 다룰 수 있도록 돕는 Model Context Protocol 서버입니다.
-세 가지 도구(`nunchi_coach`, `nunchi_expansion`, `nunchi_social_tools`)를 HTTP와 stdio 두 가지 전송 방식으로 노출합니다.
+> 한국어 우선 README — 본문은 한국어 단락을 먼저, 영어 보조 단락을 그 다음에 배치합니다.
 
-## 한국어 요약
+## 한 줄 요약
 
-`nunchi-translator-mcp`는 한국어 사용자의 사회적 신호와 상황을 LLM이 해석·조율하도록 돕는 MCP 서버입니다.
-`@modelcontextprotocol/sdk` 1.29.0 위에 Bun 런타임 + TypeScript(ESM) + Zod 스키마로 구성되며, 로컬 개발(`bun run dev`), stdio 연결(`bun run mcp:stdio`), 그리고 경량 Alpine 컨테이너(`docker build`) 세 가지 진입 경로를 제공합니다.
+`nunchi-translator-mcp`는 **눈치**(Nunchi) 기반 코칭, 확장, 소셜 분석 도구를 노출하는 **Model Context Protocol(MCP) 서버**입니다. HTTP와 stdio 두 가지 전송 방식을 지원하며, 호스트 LLM 클라이언트에서 도구로 호출할 수 있습니다.
 
-## 한눈 표 (Status)
+## One-line Summary
 
-| 항목 | 값 |
-| --- | --- |
-| 제품 | MCP 서버 (한국어 사회적 맥락 보조) |
-| 런타임 | Bun 1.3.10 (Alpine) |
-| 언어 / 모듈 시스템 | TypeScript / ESM (`"type": "module"`) |
-| MCP SDK | `@modelcontextprotocol/sdk` 1.29.0 |
-| 스키마 | Zod 4.4.3 (`src/mcp/nunchi-schemas.ts`) |
-| 전송 | HTTP(Streamable) 및 stdio |
-| HTTP 기본 포트 | `3000` (`PORT` 환경변수로 변경) |
-| 노출 도구 | `nunchi_coach`, `nunchi_expansion`, `nunchi_social_tools` |
-| 다음 명령 (개발) | `bun install --frozen-lockfile && bun run dev` |
-| 다음 명령 (stdio) | `bun run mcp:stdio` |
-| 다음 명령 (검증) | `bun run verify` (lint + typecheck + test) |
-| 다음 명령 (컨테이너) | `docker build -t nunchi-mcp . && docker run -p 3000:3000 nunchi-mcp` |
-| 배포 참고 문서 | [`docs/kakao-cloud-git-source-build.md`](./docs/kakao-cloud-git-source-build.md) |
-| 라이선스 | [`LICENSE`](./LICENSE) |
+`nunchi-translator-mcp` is a **Model Context Protocol (MCP) server** that exposes Nunchi-based coaching, expansion, and social-analysis tools. It ships with both HTTP and stdio transports so host LLM clients can register the tools directly.
 
-## 운영자 흐름 (Compact Flow)
+## 상태 한눈에 보기 / Status at a Glance
 
-1. Bun 1.3.10 이상 또는 Docker가 설치된 환경을 준비합니다.
-2. `bun install --frozen-lockfile`로 의존성을 잠금 기반으로 설치합니다.
-3. 로컬 HTTP 개발은 `bun run dev`로, 프로덕션 HTTP는 `bun run start`로 실행합니다.
-4. MCP 클라이언트와 직접 stdio 연결이 필요할 때는 `bun run mcp:stdio`를 사용합니다.
-5. 변경 후 `bun run verify`로 Biome 린트와 TypeScript 타입 검사와 테스트를 한 번에 통과시킵니다.
-6. 컨테이너 이미지는 `Dockerfile`(멀티 스테이지, Bun Alpine)로 빌드합니다.
-7. KakaoCloud Git 소스 빌드 배포는 [전용 가이드](./docs/kakao-cloud-git-source-build.md)를 따릅니다.
-
-## 목차 (Table of Contents)
-
-1. [패키지 구성 (Package Contents)](#패키지-구성-package-contents)
-2. [먼저 읽을 파일 (First Files to Read)](#먼저-읽을-파일-first-files-to-read)
-3. [진입점과 API (Entry Points)](#진입점과-api-entry-points)
-4. [빠른 시작 (Quickstart)](#빠른-시작-quickstart)
-5. [설정 (Configuration)](#설정-configuration)
-6. [명령어 참조 (Commands)](#명령어-참조-commands)
-7. [로컬 개발 (Local Development)](#로컬-개발-local-development)
-8. [테스트 (Testing)](#테스트-testing)
-9. [배포 (Deployment)](#배포-deployment)
-10. [기여 (Contributing)](#기여-contributing)
-11. [관리자 및 문의 (Maintainers)](#관리자-및-문의-maintainers)
-12. [추가 문서 (Further Documentation)](#추가-문서-further-documentation)
-13. [라이선스 (License)](#라이선스-license)
-
-## 패키지 구성 (Package Contents)
-
-| 경로 | 역할 |
-| --- | --- |
-| `src/config.ts` | 환경변수·기본값 로딩의 단일 출처 |
-| `src/http-server.ts` | HTTP 전송(Streamable HTTP) 부트스트랩 |
-| `src/stdio-server.ts` | 표준 입출력 전송 부트스트랩 |
-| `src/mcp/server.ts` | MCP 서버 등록·라우팅 코어 |
-| `src/mcp/nunchi-coach.ts` | `nunchi_coach` 도구 구현 |
-| `src/mcp/nunchi-expansion.ts` | `nunchi_expansion` 도구 구현 |
-| `src/mcp/nunchi-social-tools.ts` | `nunchi_social_tools` 도구 묶음 |
-| `src/mcp/nunchi-schemas.ts` | Zod 입력·출력 스키마 정의 |
-| `src/mcp/tool-metadata.ts` | 도구 이름·설명 등 메타데이터 |
-| `tests/config.test.ts` | 설정 로딩 단위 테스트 |
-| `tests/http-mcp.test.ts` | HTTP 전송과 도구 호출 통합 테스트 |
-| `tests/nunchi-coach.test.ts` | `nunchi_coach` 동작 테스트 |
-| `assets/` | 디렉토리·스토어 제출용 시각 자산 |
-| `docs/kakao-cloud-git-source-build.md` | KakaoCloud Git 소스 빌드 배포 가이드 |
-| `Dockerfile` | Bun Alpine 멀티 스테이지 컨테이너 빌드 |
-| `biome.json` | Biome 린트·포맷 설정 |
-| `tsconfig.json` | TypeScript 컴파일러 설정 |
-| `bun.lock` | Bun 잠금 파일 |
-
-## 먼저 읽을 파일 (First Files to Read)
-
-| 순서 | 파일 | 이유 |
+| 항목 / Item | 값 / Value | 비고 / Notes |
 | --- | --- | --- |
-| 1 | [`src/config.ts`](./src/config.ts) | 환경설정 키와 기본값을 한 곳에서 확인 |
-| 2 | [`src/mcp/server.ts`](./src/mcp/server.ts) | 등록되는 도구와 라우팅 구조 파악 |
-| 3 | [`src/mcp/nunchi-schemas.ts`](./src/mcp/nunchi-schemas.ts) | 각 도구의 입력·출력 계약 학습 |
-| 4 | [`src/http-server.ts`](./src/http-server.ts) | HTTP 진입점과 부트스트랩 절차 확인 |
-| 5 | [`tests/http-mcp.test.ts`](./tests/http-mcp.test.ts) | 기대 호출 시나리오와 응답 형태 파악 |
+| 패키지명 / Package | `nunchi-translator-mcp` | `private: true` 사내 패키지 |
+| 버전 / Version | `0.1.0` | 초기 실험 버전 |
+| 런타임 / Runtime | Bun `1.3.10` | `oven/bun:1.3.10-alpine` 베이스 이미지 |
+| 언어 / Language | TypeScript `^5.8` | `tsconfig.json` strict 모드 가정 |
+| 전송 / Transports | HTTP (`:3000`) + stdio | `mcp:stdio` 스크립트 제공 |
+| MCP SDK | `@modelcontextprotocol/sdk@1.29.0` | 2025 표준 SDK |
+| 스키마 / Validation | `zod@4.4.3` | `nunchi-schemas.ts` |
+| 린트 / Lint | Biome `^2.0.6` | `biome check .` |
+| 테스트 / Test | Bun `test` | `bun test` |
+| 컨테이너 / Container | Dockerfile 제공 | 멀티 스테이지, `:3000` 노출 |
+| 문서 / Docs | `docs/kakao-cloud-git-source-build.md` | Kakao Cloud 빌드 가이드 |
+| 운영 준비도 / Production | 실험 단계 / experimental | 인터페이스 안정화 전 |
 
-## 진입점과 API (Entry Points)
+## 빠른 흐름 / Quick Flow
 
-| 구분 | 위치 | 비고 |
+1. 호스트 LLM 클라이언트가 MCP 클라이언트를 통해 `nunchi-translator-mcp`에 연결합니다.
+2. `http-server.ts`(기본) 또는 `stdio-server.ts` 중 하나가 선택되어 MCP 핸드셰이크를 처리합니다.
+3. `src/mcp/server.ts`가 등록된 도구 목록(코치·확장·소셜·메타데이터)을 클라이언트에 알립니다.
+4. 클라이언트가 도구를 호출하면 `nunchi-coach.ts`, `nunchi-expansion.ts`, `nunchi-social-tools.ts` 중 해당 모듈이 `zod` 스키마로 입력을 검증합니다.
+5. 결과가 MCP 응답으로 직렬화되어 호스트 모델에 반환됩니다.
+
+## 목차 / Table of Contents
+
+- [목적과 사용처 / Purpose and Audience](#목적과-사용처--purpose-and-audience)
+- [패키지 구성 / Package Contents](#패키지-구성--package-contents)
+- [아키텍처 / Architecture](#아키텍처--architecture)
+- [빠른 시작 / Quickstart](#빠른-시작--quickstart)
+- [설정 / Configuration](#설정--configuration)
+- [명령어 / Commands Reference](#명령어--commands-reference)
+- [로컬 개발 / Local Development](#로컬-개발--local-development)
+- [테스트 / Testing](#테스트--testing)
+- [Docker 배포 / Container Build](#docker-배포--container-build)
+- [API와 진입점 / API and Entry Points](#api와-진입점--api-and-entry-points)
+- [유지보수와 문의 / Maintainers and Contact](#유지보수와-문의--maintainers-and-contact)
+- [추가 문서 / Further Documentation](#추가-문서--further-documentation)
+
+## 목적과 사용처 / Purpose and Audience
+
+`nunchi-translator-mcp`는 한국어권 사용자 상호작용에서 **눈치**(상황 맥락 읽기)를 보조하는 MCP 도구를 제공합니다. LLM 에이전트가 대화·관계·상황 데이터를 해석할 때, 다음을 위한 도구 표면을 노출합니다.
+
+- `nunchi-coach` : 한국어 대화에서 어조·맥락 코칭
+- `nunchi-expansion` : 짧은 입력을 확장·정제
+- `nunchi-social-tools` : 사회적 신호를 분석하는 보조 도구
+- `tool-metadata` : 등록된 도구의 메타데이터 질의
+
+주 사용자는 **MCP 호스트(예: Claude Desktop, IDE 플러그인)**를 통해 본 서버를 등록하고, 모델이 필요할 때 위 도구를 호출하도록 설정하는 개발자/운영자입니다.
+
+This project targets **MCP host application developers and operators** who want to plug Korean-context-aware Nunchi tools into their LLM agents without re-implementing them per client.
+
+## 패키지 구성 / Package Contents
+
+| 경로 / Path | 역할 / Role |
+| --- | --- |
+| `src/http-server.ts` | HTTP 전송 MCP 서버 진입점 (기본 `start`) |
+| `src/stdio-server.ts` | stdio 전송 MCP 서버 진입점 (`mcp:stdio`) |
+| `src/config.ts` | 환경 변수 기반 런타임 설정 |
+| `src/mcp/server.ts` | MCP 서버 부트스트랩과 도구 등록 |
+| `src/mcp/nunchi-coach.ts` | 코칭 도구 구현 |
+| `src/mcp/nunchi-expansion.ts` | 확장 도구 구현 |
+| `src/mcp/nunchi-social-tools.ts` | 소셜 분석 도구 구현 |
+| `src/mcp/nunchi-schemas.ts` | `zod` 입력 스키마 정의 |
+| `src/mcp/tool-metadata.ts` | 도구 메타데이터 질의 응답 |
+| `tests/` | Bun 테스트 (`config`, `http-mcp`, `nunchi-coach`) |
+| `docs/kakao-cloud-git-source-build.md` | Kakao Cloud Git 소스 빌드 절차 |
+| `assets/` | PlayMCP, 제출용 이미지 자산 |
+| `Dockerfile` | 멀티 스테이지 Bun 이미지 빌드 |
+| `biome.json` | Biome 린트·포맷 규칙 |
+
+## 아키텍처 / Architecture
+
+본 서버는 단일 프로세스 MCP 서버이며, 전송 계층만 HTTP 또는 stdio로 갈립니다.
+
+| 계층 / Layer | 모듈 / Module | 책임 / Responsibility |
 | --- | --- | --- |
-| HTTP 진입점 | [`src/http-server.ts`](./src/http-server.ts) | 기본 포트 `3000`, `PORT` 환경변수로 변경 |
-| stdio 진입점 | [`src/stdio-server.ts`](./src/stdio-server.ts) | MCP 클라이언트가 프로세스로 직접 실행 |
-| MCP 코어 | [`src/mcp/server.ts`](./src/mcp/server.ts) | 도구 등록·라우팅 일원화 |
-| 도구 1 | `nunchi_coach` | [`src/mcp/nunchi-coach.ts`](./src/mcp/nunchi-coach.ts) |
-| 도구 2 | `nunchi_expansion` | [`src/mcp/nunchi-expansion.ts`](./src/mcp/nunchi-expansion.ts) |
-| 도구 3 | `nunchi_social_tools` | [`src/mcp/nunchi-social-tools.ts`](./src/mcp/nunchi-social-tools.ts) |
+| Transport | `http-server.ts` | `:3000` HTTP MCP 핸드셰이크 |
+| Transport | `stdio-server.ts` | 표준 입출력 MCP 핸드셰이크 |
+| Boot | `mcp/server.ts` | SDK 서버 인스턴스화, 도구 등록 |
+| Tool | `mcp/nunchi-coach.ts` | 코칭 시나리오 처리 |
+| Tool | `mcp/nunchi-expansion.ts` | 입력 확장·정제 처리 |
+| Tool | `mcp/nunchi-social-tools.ts` | 사회 신호 처리 |
+| Schema | `mcp/nunchi-schemas.ts` | `zod` 검증 |
+| Meta | `mcp/tool-metadata.ts` | 자기 기술(self-description) |
+| Config | `config.ts` | 환경 변수 파싱·기본값 |
 
-각 도구의 입력·출력은 `src/mcp/nunchi-schemas.ts`의 Zod 스키마로 검증되며, 사용자용 설명은 `src/mcp/tool-metadata.ts`에서 관리합니다.
+요청 흐름:
 
-## 빠른 시작 (Quickstart)
+1. 클라이언트가 HTTP 또는 stdio로 MCP 초기화 요청 전송
+2. `mcp/server.ts`가 등록된 도구 목록을 `ListTools` 응답으로 반환
+3. 클라이언트가 특정 도구를 호출하면 해당 도구 모듈이 `nunchi-schemas.ts`로 입력을 검증
+4. 도구 본 로직이 결과를 생성하고 SDK가 JSON-RPC 응답으로 직렬화
+5. 호출자는 결과를 다시 모델 컨텍스트에 주입
+
+## 빠른 시작 / Quickstart
+
+### 1) 의존성 설치 / Install dependencies
 
 ```bash
-# 1. Bun 설치 (https://bun.sh 기준)
-curl -fsSL https://bun.sh/install | bash
-
-# 2. 저장소에서 의존성 설치 (잠금 파일 기반)
 bun install --frozen-lockfile
+```
 
-# 3. HTTP 모드 개발 실행 (핫 리로드)
+### 2) 개발 모드 (HTTP, 핫 리로드) / Dev (HTTP, hot reload)
+
+```bash
 bun run dev
+```
 
-# 4. stdio 모드 실행 (MCP 클라이언트와 직접 연결)
+### 3) stdio 모드로 실행 / Run in stdio mode
+
+```bash
 bun run mcp:stdio
 ```
 
-HTTP 모드로 띄운 뒤 MCP 클라이언트는 환경변수 `PORT`에서 정의한 포트로 서버에 접속합니다.
-stdio 모드는 별도 포트 없이 MCP 클라이언트가 자식 프로세스로 직접 실행합니다.
-
-## 설정 (Configuration)
-
-| 변수 | 기본값 | 출처 | 설명 |
-| --- | --- | --- | --- |
-| `PORT` | `3000` | `Dockerfile`의 `ENV` | HTTP 모드에서 사용할 포트 |
-| `NODE_ENV` | `production` | `Dockerfile`의 `ENV` | 컨테이너에서만 명시적으로 설정 |
-
-새로운 환경변수가 필요할 경우 `src/config.ts`를 단일 출처로 두고 거기에서 일괄 로딩·기본값을 관리해 주세요.
-
-## 명령어 참조 (Commands)
-
-| 명령 | 정의 (package.json) | 용도 |
-| --- | --- | --- |
-| `bun run dev` | `bun run --hot src/http-server.ts` | HTTP 모드 핫 리로드 개발 실행 |
-| `bun run start` | `bun run src/http-server.ts` | HTTP 모드 프로덕션 실행(컨테이너 진입점) |
-| `bun run mcp:stdio` | `bun run src/stdio-server.ts` | stdio 모드로 MCP 클라이언트에 연결 |
-| `bun run typecheck` | `tsc --noEmit` | TypeScript 타입 검사 |
-| `bun run lint` | `biome check .` | Biome 정적 분석 |
-| `bun run format` | `biome check --write .` | Biome 자동 포맷 |
-| `bun test` | `bun test` | Bun 테스트 러너 실행 |
-| `bun run verify` | `lint && typecheck && test` | 회귀 검증 일괄 실행 |
-
-## 로컬 개발 (Local Development)
-
-- 런타임은 Bun 1.3.10 이상을 권장합니다(컨테이너 베이스 이미지와 일치).
-- 코드 스타일은 Biome(`biome.json`)를 따르며, `bun run format`으로 자동 정리할 수 있습니다.
-- 새 도구를 추가할 때는 다음 순서를 권장합니다.
-  1. `src/mcp/nunchi-schemas.ts`에 Zod 입력·출력 스키마를 먼저 정의합니다.
-  2. 도구 로직 파일을 `src/mcp/` 아래에 둡니다.
-  3. `src/mcp/tool-metadata.ts`에 이름·설명·예시를 등록합니다.
-  4. `src/mcp/server.ts`에서 도구를 서버에 등록합니다.
-  5. `tests/` 아래에 동작 회귀 테스트를 추가하고 `bun run verify`로 통과를 확인합니다.
-
-## 테스트 (Testing)
-
-| 테스트 파일 | 대응 모듈 | 검증 범위 |
-| --- | --- | --- |
-| `tests/config.test.ts` | `src/config.ts` | 설정 로딩과 기본값 |
-| `tests/http-mcp.test.ts` | `src/http-server.ts`, `src/mcp/server.ts` | HTTP 전송·도구 호출 흐름 |
-| `tests/nunchi-coach.test.ts` | `src/mcp/nunchi-coach.ts` | `nunchi_coach` 도구 동작 |
+### 4) 빌드 산출물 없이 즉시 검증 / One-shot verify
 
 ```bash
-bun test                          # 전체 실행
-bun test tests/http-mcp.test.ts   # 단일 파일 실행
-bun run verify                    # lint + typecheck + test 일괄 실행
+bun run verify
 ```
 
-## 배포 (Deployment)
+## 설정 / Configuration
 
-### Docker
+본 서버는 `src/config.ts`를 통해 환경 변수를 읽습니다. 자세한 변수 목록은 `src/config.ts`를 직접 확인해 주세요. 컨테이너 기본값은 `PORT=3000`, `NODE_ENV=production`입니다.
 
-`Dockerfile`은 Bun 1.3.10-alpine 기반 멀티 스테이지 빌드입니다.
+| 변수 / Variable | 기본값 / Default | 용도 / Purpose |
+| --- | --- | --- |
+| `PORT` | `3000` | HTTP MCP 수신 포트 |
+| `NODE_ENV` | `production` (컨테이너) | 런타임 모드 |
+| 기타 MCP 옵션 | `src/config.ts` 참조 | 도구 동작 제어 |
 
-- 1단계(`deps`): `package.json`과 `bun.lock`만 복사해 `bun install --frozen-lockfile`로 의존성을 설치합니다.
-- 2단계: 런타임 이미지에 `node_modules`와 소스를 복사하고 `CMD ["bun", "run", "start"]`로 HTTP 모드를 실행합니다.
-- `PORT=3000`을 노출하며 `-p 3000:3000`으로 호스트에 매핑해 사용합니다.
+민감한 값(예: 외부 LLM 호출 키)은 저장소 외부에서 주입해 주세요. 본 README는 예시로 비공개 IP나 컨테이너 번호를 하드코딩하지 않습니다.
 
-```bash
-docker build -t nunchi-mcp .
-docker run --rm -p 3000:3000 -e PORT=3000 nunchi-mcp
-```
+## 명령어 / Commands Reference
 
-### KakaoCloud Git 소스 빌드
-
-KakaoCloud에서 Git 소스 빌드로 이 저장소를 컨테이너 배포하는 단계별 절차는 전용 가이드를 참고합니다.
-[`docs/kakao-cloud-git-source-build.md`](./docs/kakao-cloud-git-source-build.md)
-
-## 기여 (Contributing)
-
-기여 절차는 [`CONTRIBUTING.md`](./CONTRIBUTING.md)를 참고해 주세요.
-모든 변경은 `bun run verify`(lint + typecheck + test)를 통과해야 하며, 코드 스타일은 Biome 표준을 따릅니다.
-
-## 관리자 및 문의 (Maintainers)
-
-저장소 메타데이터(예: `package.json`의 `name` 필드, 커밋 기록, 이슈 트래커)를 우선 참고해 주세요.
-별도 운영 조직 정보가 저장소에 명시되지 않은 경우 저장소 관리자(Maintainer)에게 이슈로 문의하는 것을 권장합니다.
-
-## 추가 문서 (Further Documentation)
-
-| 주제 | 위치 |
+| 명령 / Command | 설명 / Description |
 | --- | --- |
-| KakaoCloud Git 소스 빌드 | [`docs/kakao-cloud-git-source-build.md`](./docs/kakao-cloud-git-source-build.md) |
-| MCP 프로토콜 명세 | <https://modelcontextprotocol.io> |
-| Bun 런타임 | <https://bun.sh> |
-| Biome 린터 | <https://biomejs.dev> |
-| TypeScript | <https://www.typescriptlang.org> |
-| Zod 스키마 | <https://zod.dev> |
+| `bun run dev` | HTTP 서버 핫 리로드 개발 모드 |
+| `bun run start` | 프로덕션 HTTP 서버 |
+| `bun run mcp:stdio` | stdio 전송 MCP 서버 |
+| `bun run typecheck` | `tsc --noEmit` 정적 타입 검사 |
+| `bun run lint` | Biome 정적 분석 |
+| `bun run format` | Biome 자동 수정 |
+| `bun test` | Bun 테스트 러너 |
+| `bun run verify` | lint + typecheck + test 일괄 실행 |
 
-## 라이선스 (License)
+## 로컬 개발 / Local Development
 
-이 저장소는 [`LICENSE`](./LICENSE) 파일에 명시된 조건을 따릅니다.
-공개 배포·수정·재배포 정책은 해당 파일을 직접 확인해 주세요.
+- 런타임은 Bun `1.3.10` 이상을 권장합니다. Dockerfile과 동일한 베이스를 사용하면 환경 차이를 줄일 수 있습니다.
+- 린트와 포맷은 Biome가 단일 소스입니다. 커밋 전 `bun run format`을 실행해 주세요.
+- 새 도구를 추가할 때는 다음 순서를 권장합니다.
+  1. `src/mcp/nunchi-schemas.ts`에 `zod` 스키마 정의
+  2. 해당 기능 모듈(`nunchi-coach.ts` 등)에 핸들러 구현
+  3. `src/mcp/server.ts`에서 도구 등록
+  4. `tests/`에 단위 테스트 추가
+  5. `bun run verify`로 일괄 검증
+
+## 테스트 / Testing
+
+- 테스트 프레임워크: Bun 내장 `bun test`
+- 테스트 위치: `tests/`
+- 현재 포함된 테스트:
+  - `config.test.ts` — 설정 파싱 검증
+  - `http-mcp.test.ts` — HTTP 전송 MCP 동작 검증
+  - `nunchi-coach.test.ts` — 코칭 도구 동작 검증
+
+```bash
+bun test
+```
+
+새 도구를 등록한 경우, `bun run verify`로 정적 분석과 테스트를 함께 실행해 회귀를 방지하세요.
+
+## Docker 배포 / Container Build
+
+멀티 스테이지 Dockerfile이 제공됩니다. 빌드 산출물만 담는 경량 이미지를 만듭니다.
+
+```bash
+docker build -t nunchi-translator-mcp:0.1.0 .
+docker run --rm -p 3000:3000 nunchi-translator-mcp:0.1.0
+```
+
+Kakao Cloud Git 소스 빌드를 사용하는 경우 `docs/kakao-cloud-git-source-build.md`의 절차를 참고하세요.
+
+## API와 진입점 / API and Entry Points
+
+MCP는 JSON-RPC 기반이지만 전송에 따라 진입 형태가 달라집니다.
+
+| 전송 / Transport | 진입점 / Entry Point | 권장 호스트 / Suggested Host |
+| --- | --- | --- |
+| HTTP | `http://<host>:3000/mcp` (MCP 라우팅) | Claude Desktop, IDE MCP 플러그인 |
+| stdio | `bun run src/stdio-server.ts` | 로컬 MCP 클라이언트 |
+
+각 도구의 입력·출력 스키마는 `src/mcp/nunchi-schemas.ts`와 `src/mcp/tool-metadata.ts`를 통해 자체 설명(self-describing)됩니다. 자세한 도구 시그니처는 소스 코드를 직접 확인하세요.
+
+## 유지보수와 문의 / Maintainers and Contact
+
+이 저장소는 사내 비공개 패키지(`private: true`)이며 외부 배포를 전제로 하지 않습니다. 운영 및 변경 요청은 저장소 소유 팀에 문의해 주세요.
+
+- 저장소 소유 / Owner: 본 저장소를 운영하는 사내 팀
+- 이슈 트래커: 저장소 내 Issues 탭 사용
+- 보안 이슈: 공개 이슈 대신 사내 보안 채널 사용
+
+## 추가 문서 / Further Documentation
+
+- `docs/kakao-cloud-git-source-build.md` — Kakao Cloud Git 소스 빌드 절차
+- `CONTRIBUTING.md` — 기여 가이드 (해당 문서 우선)
+- `LICENSE` — 라이선스 전문
+- MCP 프로토콜 사양: Model Context Protocol 공식 문서
+
+## 라이선스 / License
+
+`LICENSE` 파일을 참조하세요. 본 패키지는 `private: true`로 표시되어 있으므로 외부 재배포를 금합니다.
